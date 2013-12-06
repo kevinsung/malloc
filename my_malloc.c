@@ -1,12 +1,10 @@
-#include "header.h"
+#include "my_malloc.h"
 #include <stdio.h>
 
 static Header base[MALLOC_SIZE];
 static Header *freep = NULL;
 static void* pointers[MALLOC_SIZE];
 static int lastindex = 0;
-void *my_malloc(unsigned nbytes, char *file, int line);
-void my_free(void *ap, char *file, int line);
 static void enlistpointer(void*);
 static int delistpointer(void*);
 static int findpointer(void*);
