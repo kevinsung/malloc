@@ -20,8 +20,13 @@ void *my_malloc(unsigned nbytes, char *file, int line) {
     }
     for (p = prevp->s.succ; ; prevp = p, p = p->s.succ) {
         if (p->s.size >= nunits) {
-            if (p->s.size == nunits)
+            if (p->s.size == nunits) {
+                if (p == p->s.succ) {   //last free block
+                    printf("my_malloc Error: Ran out of memory at %s, line %d\n", file, line);
+                    return NULL;
+                } 
                 prevp->s.succ = p->s.succ;
+            }
             else {
                 p->s.size -= nunits;
                 p += p->s.size;
@@ -86,9 +91,12 @@ static int delistpointer(void* p) {
 }
 
 static int findpointer(void* p) {
+    if (p == NULL)
+        return 0;
     int i;
-    for (i = 0; i <= lastindex; ++i)
+    for (i = 0; i <= lastindex; ++i) {
         if (pointers[i] == p)
             return 1;
+    }
     return 0;
 }

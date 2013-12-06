@@ -9,14 +9,30 @@ void main() {
     int *b = malloc(4096*sizeof(int));
     float *c = malloc(2048*sizeof(float));
     double *d = malloc(1022*sizeof(double));    /*malloc is now out of space*/
+    char *e = malloc(sizeof(char));
 
-    int i = 0;
+    int i;
+    for (i = 0; i < 1022; ++i) {
+        *(a+i) = 'a' + (i % 26);
+        *(b+i) = i;
+        *(c+i) = 3.14 + i;
+        *(d+i) = 2.718 + i;
+    }
+    *(a+i) = '\0';
+    printf("%s\n", a);
+    printf("%d\n", *(b+256));
+    printf("%f\n", *(c+314));
+    printf("%f\n", *(d+278));
 
-    char *e = malloc(80000*sizeof(char));
-
+    free(a+10);
     free(a);
     free(b);
     free(c);
     free(d);
+    free(e);
+    free(i);
+
+    int *f;
+    free(f);
 
 }
