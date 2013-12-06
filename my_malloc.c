@@ -32,7 +32,7 @@ void *my_malloc(unsigned nbytes, char *file, int line) {
             return (void *) (p+1);
         }
         if (p == freep) {
-            printf("my_malloc Error: Ran out of memory\n");
+            printf("my_malloc Error: Ran out of memory at %s, line %d\n", file, line);
             return NULL;
         }
     }
@@ -40,7 +40,7 @@ void *my_malloc(unsigned nbytes, char *file, int line) {
 
 void my_free(void *ap, char *file, int line) {
     if (!findpointer(ap)) {
-        printf("my_free Error: Invalid free, pointer never allocated\n");
+        printf("my_free Error: Invalid free at %s, line %d\n", file, line);
         return;
     }
     Header *bp, *p;
@@ -66,7 +66,7 @@ void my_free(void *ap, char *file, int line) {
 
 static void enlistpointer(void* p) {
    int i;
-   for (i = 0; pointers[i] != 0; ++i)
+   for (i = 0; pointers[i] != NULL; ++i)
        ;
    pointers[i] = p;
    if (lastindex < i)
@@ -79,7 +79,7 @@ static int delistpointer(void* p) {
         ;
     if (i > lastindex)
         return 0;
-    pointers[i] = 0;
+    pointers[i] = NULL;
     if (i == lastindex)
         --lastindex;
     return 1;
