@@ -4,14 +4,20 @@
 void main() {
 
     //printf("Size of char, int, float, double, Header is %d, %d, %d, %d, %d\n", sizeof(char), sizeof(int), sizeof(float), sizeof(double), sizeof(Header));
+   // 4096 and 65536 total bytes
 
-    char *a = malloc(32704*sizeof(char));
-    int *b = malloc(4096*sizeof(int));
+    char *a = malloc(sizeof(char));
+    free(a);
+    a = malloc(sizeof(char));
+    free(a);
+    //int *b = malloc(1000*sizeof(int));
+    //free(b);
+    /*int *b = malloc(4096*sizeof(int));
     float *c = malloc(2048*sizeof(float));
-    double *d = malloc(1022*sizeof(double));    /*malloc is now out of space*/
-    char *e = malloc(sizeof(char));
-
-    int i;
+    double *d = malloc(1022*sizeof(double));  /*malloc is now out of space*/
+    //char *e = malloc(sizeof(char));
+      
+    /*int i;
     for (i = 0; i < 1022; ++i) {
         *(a+i) = 'a' + (i % 26);
         *(b+i) = i;
@@ -34,5 +40,6 @@ void main() {
 
     int *f;
     free(f);
+    */
 
 }
