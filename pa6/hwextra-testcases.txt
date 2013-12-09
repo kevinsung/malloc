@@ -1,0 +1,149 @@
+TEST CASES FOR PA5
+Joyce Wang and Kevin Sung
+--------------------------------------
+
+ONLY MALLOC TESTS (65520 total bytes, Header is 16 bytes)
+
+TEST 1: one pointer malloc-ed success (char*)
+Code: char *a = malloc(32704*sizeof(char)); // 32704 bytes
+//total space malloc-ed is ((32704 + (16))/16)*16 [added Header size]
+Expected: valid malloc since 32720 < 65520
+Result: valid malloc -- no error
+
+TEST 2: multiple pointers malloc-ed success (char*, int*)
+Code:
+char *a = malloc(32704*sizeof(char)); // 32704 bytes
+int *b = malloc(4096*sizeof(int)); // 16384 bytes
+//total space malloc-ed is ((49088 + (16*2))/16)*16 
+Expected: valid malloc since 49120 < 65520
+Result: valid malloc -- no error
+
+TEST 3: multiple pointer malloc-ed success (char*, int*, float*)
+Code:
+char *a = malloc(32704*sizeof(char)); // 32704 bytes
+int *b = malloc(4096*sizeof(int)); // 16384 bytes
+float *c = malloc(2048*sizeof(float)); // 8192 bytes
+//total space malloc-ed is ((57280 + (16*3))/16)*16
+Expected: valid malloc since 57328 < 65520
+Result: valid malloc -- no error
+
+TEST 4: multiple pointer malloc-ed success (char*, int*, float*, double*)
+Code:
+char *a = malloc(32704*sizeof(char)); // 32704 bytes
+int *b = malloc(4096*sizeof(int)); // 16384 bytes
+float *c = malloc(2048*sizeof(float)); // 8192 bytes
+double *d = malloc(1022*sizeof(double)); // 8176 bytes
+//total space malloc-ed is ((65456 + (16*4))/16)*16
+Expected: valid malloc since 65520 = 65520
+Result: valid malloc -- no error
+
+TEST 5: saturation - multiple pointer malloc-ed failure (char*, int*, float*, double*)
+Code:
+char *a = malloc(32704*sizeof(char)); // 32704 bytes
+int *b = malloc(4096*sizeof(int)); // 16384 bytes
+float *c = malloc(2048*sizeof(float)); // 8192 bytes
+double *d = malloc(1022*sizeof(double)); // 8176 bytes
+char *e = malloc(sizeof(char)); // 1 byte
+//total space malloc-ed is ((65457 + (16*5))/16)*16
+Expected: "my_malloc Error: Ran out of memory..." invalid malloc since 65536 > 65520
+Result: "my_malloc Error: Ran out of memory..." invalid malloc
+
+TEST 6: one pointer malloc-ed success (exact size)
+Code:
+char *a = malloc(65504*sizeof(char)); // 65504 bytes
+//total space malloc-ed is ((65504 + 16)/16)*16
+Expected: valid malloc since 65520 = 65520
+Result: valid malloc -- no error
+
+TEST 7: saturation - one pointer malloc-ed failure (one greater than exact size)
+Code:
+char *a = malloc(65505*sizeof(char)); // 65505 bytes
+//total space malloc-ed is ((65505 + 16)/16)*16
+Expected: "my_malloc Error: Ran out of memory..." invalid malloc since 65521 > 65520
+Result: "my_malloc Error: Ran out of memory..." invalid malloc
+
+
+ONLY FREE TESTS
+
+TEST 8: free one pointer success
+Code:
+char *a = malloc(sizeof(char));
+free(a);
+Expected: valid free -- no error
+Result: valid free -- no error
+
+TEST 9: free multiple pointer success (free both at end)
+Code:
+char *a = malloc(sizeof(char));
+int *b = malloc(1000*sizeof(int));
+free(a);
+free(b);
+Expected: valid free -- no error
+Result: valid free -- no error
+
+TEST 10: free multiple pointer success (free one before other is malloc-ed)
+Code:
+char *a = malloc(sizeof(char));
+free(a);
+int *b = malloc(1000*sizeof(int));
+free(b);
+Expected: valid free -- no error
+Result: valid free -- no error
+
+TEST 11: free without allocating
+Code:
+char *a;
+free(a);
+Expected: "my_free Error: Invalid free at..."  invalid free
+Result: "my_free Error: Invalid free at..."  invalid free
+
+TEST 12: free pointers to dynamic memory not returned from malloc
+Code:
+char *a = malloc(sizeof(char));
+free(a+5);
+Expected: "my_free Error: Invalid free at..."  invalid free
+Result: "my_free Error: Invalid free at..."  invalid free
+
+TEST 13: redundant freeing of same pointer
+Code:
+char *a = malloc(sizeof(char));
+free(a);
+free(a);
+Expected: "my_free Error: Invalid free at..."  invalid free
+Result: "my_free Error: Invalid free at..."  invalid free
+
+TEST 14: freeing of same pointer after being malloc-ed twice
+Code:
+char *a = malloc(sizeof(char));
+free(a);
+a = malloc(sizeof(char));
+free(a);
+Expected: valid free -- no error
+Result: valid free -- no error
+
+
+BOTH MALLOC AND FREE TESTS
+
+TEST 15: fragmentation - malloc, free two nonconsecutive pointers, then malloc the total size that was freed
+char *a = malloc(32704*sizeof(char)); // 32704 bytes
+int *b = malloc(4096*sizeof(int)); // 16384 bytes
+float *c = malloc(2048*sizeof(float)); // 8192 bytes
+double *d = malloc(1022*sizeof(double)); // 8176 bytes
+free(b);
+free(d);
+//total of 24560 bytes free
+b = malloc(6140*sizeof(int)); // 24560 bytes
+Expected: "my_malloc Error: Ran out of memory..." even though there are 24560 bytes, they are not consecutive blocks of memory -- invalid malloc
+Result: "my_malloc Error: Ran out of memory..." invalid malloc
+
+TEST 16: malloc, free two nonconsecutive pointers, then malloc one of the sizes that was freed
+char *a = malloc(32704*sizeof(char)); // 32704 bytes
+int *b = malloc(4096*sizeof(int)); // 16384 bytes
+float *c = malloc(2048*sizeof(float)); // 8192 bytes
+double *d = malloc(1022*sizeof(double)); // 8176 bytes
+free(b);
+free(d);
+//total of 24560 bytes free - nonconsecutive blocks: one 16384 bytes and the other 8176 bytes
+b = malloc(4096*sizeof(int)); // 16384 bytes
+Expected: valid malloc and free -- no error
+Result: valid malloc and free -- no error
